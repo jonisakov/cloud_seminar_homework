@@ -1,13 +1,23 @@
-import requests
+import json
+from oci.object_storage import ObjectStorageClient
 
-def append_to_file(file_name, input_data):
-  # Open the file in append mode
-  with open(file_name, "a") as f:
-    # Write the input data to the file
-    f.write(input_data)
+def save_to_bucket(bucket_name, object_name, data):
+  # Create a new ObjectStorageClient instance
+  object_storage_client = ObjectStorageClient()
 
-# Receive the input data from the POST request
-input_data = request.form['input_data']
+  # Generate the full object name, including the bucket and object names
+  object_name = f"{bucket_name}/{object_name}"
 
-# Call the append_to_file function to write the data to the file
-append_to_file("my_file.txt", input_data)
+  # Write the data to the object storage bucket as JSON
+  object_storage_client.put_object(
+    namespace_name="my_namespace",
+    bucket_name=bucket_name,
+    object_name=object_name,
+    body=json.dumps(data)
+  )
+
+# Receive the JSON-encoded data from the POST request
+data = request.get_json()
+
+# Call the save_to_bucket function to write the data to the object storage bucket
+save_to_bucket("my_bucket", "my_file.json", data)
