@@ -15,7 +15,7 @@ def handler(ctx, data: io.BytesIO = None):
         # update with your tenancy's OCID
         "tenancy": "ocid1.bucket.oc1.il-jerusalem-1.aaaaaaaaosgbu7vyfhxi4bgvgswf2cf37j3b4ybaskbhv5vzw4evhlfot7va",
         # replace with the region you are using
-        "region": "il-jerusalem-1."
+        "region": "il-jerusalem-1"
     }
     try:
         object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
