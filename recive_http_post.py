@@ -17,7 +17,7 @@ def handler(ctx, data: io.BytesIO = None):
         # replace with the region you are using
         "region": "il-jerusalem-1"
     }
-    if (ctx.method() == 'GET'):
+    if (ctx.method == 'GET'):
         try:
             object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
             namespace = object_storage.get_namespace().data
@@ -61,8 +61,12 @@ def handler(ctx, data: io.BytesIO = None):
             return {'status': 'success', 'object_name': object_name}
         except (Exception) as e:
             return response.Response(
-            ctx, response_data="500 Server error- POST",
-            headers={"Content-Type": "text/plain"}
-        )
-        
+                ctx, response_data="500 Server error- POST",
+                headers={"Content-Type": "text/plain"}
+            )
+
+    return response.Response(
+        ctx, response_data="{0}".format(ctx.method),
+        headers={"Content-Type": "text/plain"}
+    )
 
