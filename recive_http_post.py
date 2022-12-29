@@ -1,23 +1,71 @@
+import io
 import json
-from oci.object_storage import ObjectStorageClient
+import logging
+from fdk import response
+import oci
+def detect_request_type(ctx):
+    if ctx.method == 'GET':
+        return 'GET'
+    elif ctx.method == 'POST':
+        return 'POST'
+      
+def handler(ctx, data: io.BytesIO=None):
+    if None == ctx.RequestURL():
+        return "Function loaded properly but not invoked via an HTTP request."
+    signer = oci.auth.signers.get_resource_principals_signer()
+    logging.getLogger().info("URI: " + ctx.RequestURL() )
+    config = {
+        # update with your tenancy's OCID
+        "tenancy": "ocid1.tenancy.oc1..XXXXXXX",
+        # replace with the region you are using
+        "region": "ca-toronto-1"
+    }
+    if(detect_request_type(ctx)== 'GET'):
+      try:
+          object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
+          namespace = object_storage.get_namespace().data
+          # update with your bucket name
+          bucket_name = "cloud_seminar_homework"
+          file_object_name = ctx.RequestURL()
+          if file_object_name.endswith("/"):
+              logging.getLogger().info("Adding index.html to reques URL " + file_object_name)
+              file_object_name += "index.html"
 
-def save_to_bucket(bucket_name, object_name, data):
-  # Create a new ObjectStorageClient instance
-  object_storage_client = ObjectStorageClient()
+          # strip off the first character of the URI (i.e. the /)
+          file_object_name = file_object_name[1:]
 
-  # Generate the full object name, including the bucket and object names
-  object_name = f"{bucket_name}/{object_name}"
+          obj = object_storage.get_object(namespace, bucket_name, file_object_name)
+          return response.Response(
+              ctx, response_data=obj.data.content,
+              headers={"Content-Type": obj.headers['Content-type']}
+          )
+      except (Exception) as e:
+          return response.Response(
+              ctx, response_data="500 Server error- GET",
+              headers={"Content-Type": "text/plain"}
+              )
+    else:
+        try:
+            request_body = request.get_json()
+            # create a client for interacting with Object Storage
+            object_storage_client = oci.object_storage.ObjectStorageClient()
+            # create a unique object name for the request body
+            object_name = 'request_body_' + str(int(time.time())) + '.json'
+            
+            # write the JSON to an object in the bucket
+            object_storage_client.put_object(
+                bucket_name='cloud_seminar_homework',
+                object_name=object_name,
+                content_type='application/json',
+                body=json.dumps(request_body)
+            )
+            
+            # return a success response
+            return {'status': 'success', 'object_name': object_name}
+      except (Exception) as e:
+          return response.Response(
+              ctx, response_data="500 Server error- POST",
+              headers={"Content-Type": "text/plain"}
+              )
+        
 
-  # Write the data to the object storage bucket as JSON
-  object_storage_client.put_object(
-    namespace_name="my_namespace",
-    bucket_name=bucket_name,
-    object_name=object_name,
-    body=json.dumps(data)
-  )
-
-# Receive the JSON-encoded data from the POST request
-data = request.get_json()
-
-# Call the save_to_bucket function to write the data to the object storage bucket
-save_to_bucket("my_bucket", "my_file.json", data)
