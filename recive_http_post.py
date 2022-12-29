@@ -3,11 +3,6 @@ import json
 import logging
 from fdk import response
 import oci
-def detect_request_type(ctx):
-    if ctx.method == 'GET':
-        return 'GET'
-    elif ctx.method == 'POST':
-        return 'POST'
       
 def handler(ctx, data: io.BytesIO=None):
     if None == ctx.RequestURL():
@@ -20,7 +15,7 @@ def handler(ctx, data: io.BytesIO=None):
         # replace with the region you are using
         "region": "il-jerusalem-1."
     }
-    if(detect_request_type(ctx)== 'GET'):
+    if(ctx.method == 'GET'):
       try:
           object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
           namespace = object_storage.get_namespace().data
