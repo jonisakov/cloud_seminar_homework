@@ -54,7 +54,7 @@ def handler(ctx, data: io.BytesIO = None):
                 bucket_name='cloud_seminar_homework',
                 object_name=object_name,
                 content_type='application/json',
-                body=json.dumps(json.loads(data.getvalue()))
+                body=json.dumps(str(data.getvalue()))
             )
 
             # return a success response
@@ -66,7 +66,7 @@ def handler(ctx, data: io.BytesIO = None):
             )
 
     return response.Response(
-        ctx, response_data="{0},{1}".format(ctx._method,json.loads(data.getvalue()) ),
+        ctx, response_data="{0},{1}".format(ctx._method, str(data.getvalue()) ),
         headers={"Content-Type": "text/plain"}
     )
 
