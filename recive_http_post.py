@@ -61,7 +61,7 @@ def handler(ctx, data: io.BytesIO = None):
             return {'status': 'success', 'object_name': object_name}
         except (Exception) as e:
             return response.Response(
-                ctx, response_data="500 Server error- POST",
+                ctx, response_data="500 Server error- POST, {0}".format(e),
                 headers={"Content-Type": "text/plain"}
             )
 
