@@ -16,9 +16,9 @@ def handler(ctx, data: io.BytesIO=None):
     logging.getLogger().info("URI: " + ctx.RequestURL() )
     config = {
         # update with your tenancy's OCID
-        "tenancy": "ocid1.tenancy.oc1..XXXXXXX",
+        "tenancy": "ocid1.tenancy.oc1..aaaaaaaat3g6mubuxwcl26ef5tve3gpoz3bnrueskq7ma2fyjlk3jiiinxea",
         # replace with the region you are using
-        "region": "ca-toronto-1"
+        "region": "il-jerusalem-1."
     }
     if(detect_request_type(ctx)== 'GET'):
       try:
