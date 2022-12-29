@@ -45,7 +45,7 @@ def handler(ctx, data: io.BytesIO = None):
         try:
             request_body = str(data.getvalue())
             # create a client for interacting with Object Storage
-            object_storage_client = oci.object_storage.ObjectStorageClient()
+            object_storage_client = oci.object_storage.ObjectStorageClient(config={}, signer=signer)
             # create a unique object name for the request body
             object_name = 'request_body_' + str(int(time.time())) + '.json'
 
