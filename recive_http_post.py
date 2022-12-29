@@ -54,19 +54,19 @@ def handler(ctx, data: io.BytesIO = None):
                 bucket_name='cloud_seminar_homework',
                 object_name=object_name,
                 content_type='application/json',
-                body=json.dumps(request_body)
+                body=json.dumps(json.loads(data.getvalue()))
             )
 
             # return a success response
             return {'status': 'success', 'object_name': object_name}
         except (Exception) as e:
             return response.Response(
-                ctx, response_data="{0}".format(dir(ctx)),
+                ctx, response_data="500 Server error- POST",
                 headers={"Content-Type": "text/plain"}
             )
 
     return response.Response(
-        ctx, response_data="{0}".format(ctx._method),
+        ctx, response_data="{0},{1}".format(ctx._method,json.loads(data.getvalue()) ),
         headers={"Content-Type": "text/plain"}
     )
 
