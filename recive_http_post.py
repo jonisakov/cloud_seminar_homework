@@ -43,7 +43,7 @@ def handler(ctx, data: io.BytesIO = None):
             )
     else:
         try:
-            request_body = request.get_json()
+            request_body = str(data.getvalue())
             # create a client for interacting with Object Storage
             object_storage_client = oci.object_storage.ObjectStorageClient()
             # create a unique object name for the request body
