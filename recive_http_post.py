@@ -43,20 +43,18 @@ def handler(ctx, data: io.BytesIO = None):
             )
     else:
         try:
-            request_body = str(data.getvalue())
-            # create a client for interacting with Object Storage
-            object_storage_client = oci.object_storage.ObjectStorageClient(config={}, signer=signer)
-            # create a unique object name for the request body
+            # Load the OCI config file
+            config = oci.config.from_file()
+            # Create an Object Storage client
+            object_storage_client = oci.object_storage.ObjectStorageClient(config)
+            # Set the namespace and bucket name
+            namespace = config["namespace"]
+            bucket_name = "cloud_seminar_homework"
+            # Set the object name and content
             object_name = 'request_body_' + str(int(time.time())) + '.json'
-            namespace = object_storage_client.get_namespace().data
-            # write the JSON to an object in the bucket
-            object_storage_client.put_object(namespace,
-                bucket_name='cloud_seminar_homework',
-                object_name=object_name,
-                content_type='application/json',
-                body=json.dumps(str(data.getvalue()))
-            )
-
+            object_content = str(data.getvalue())
+            # Use the put_object function to upload the object
+            object_storage_client.put_object(namespace, bucket_name, object_name, object_content)
             # return a success response
             return {'status': 'success', 'object_name': object_name}
         except (Exception) as e:
