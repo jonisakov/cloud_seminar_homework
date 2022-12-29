@@ -44,7 +44,7 @@ def handler(ctx, data: io.BytesIO = None):
     else:
         try:
             # Load the OCI config file
-            config = oci.config.from_file()
+            config = oci.config.from_file("/home/jonathan_i/.oci/config")
             # Create an Object Storage client
             object_storage_client = oci.object_storage.ObjectStorageClient(config)
             # Set the namespace and bucket name
