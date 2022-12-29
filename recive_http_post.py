@@ -66,7 +66,7 @@ def handler(ctx, data: io.BytesIO = None):
             )
 
     return response.Response(
-        ctx, response_data="{0}".format(ctx.method),
+        ctx, response_data="{0}".format(ctx._method),
         headers={"Content-Type": "text/plain"}
     )
 
