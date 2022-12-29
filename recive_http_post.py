@@ -17,7 +17,7 @@ def handler(ctx, data: io.BytesIO = None):
         # replace with the region you are using
         "region": "il-jerusalem-1"
     }
-    if (ctx.method == 'GET'):
+    if (ctx._method == 'GET'):
         try:
             object_storage = oci.object_storage.ObjectStorageClient(config, signer=signer)
             namespace = object_storage.get_namespace().data
