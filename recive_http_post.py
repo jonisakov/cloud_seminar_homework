@@ -48,9 +48,9 @@ def handler(ctx, data: io.BytesIO = None):
             object_storage_client = oci.object_storage.ObjectStorageClient(config={}, signer=signer)
             # create a unique object name for the request body
             object_name = 'request_body_' + str(int(time.time())) + '.json'
-
+            namespace = object_storage_client.get_namespace().data
             # write the JSON to an object in the bucket
-            object_storage_client.put_object(
+            object_storage_client.put_object(namespace,
                 bucket_name='cloud_seminar_homework',
                 object_name=object_name,
                 content_type='application/json',
